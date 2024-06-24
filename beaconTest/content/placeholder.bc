@@ -1,0 +1,17 @@
+window (title = "test", other arguments) {
+    box (id = 3) {
+        box  (id = 2){
+            box  (id = 1){
+
+            }
+        }
+    }
+    box (id = 2){
+        box (id = 1){
+
+        }
+    }
+    box (id = 1){
+
+    }
+}
