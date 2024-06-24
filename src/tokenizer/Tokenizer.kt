@@ -14,8 +14,14 @@ class Tokenizer(private val input: String) {
                     tokens.add(Token.Open)
                     position++
                 }
+                input.startsWith(";", position) -> {
+                    tokens.add(parseComment())
+                }
                 input.startsWith("box", position) -> {
                     tokens.add(parseElement("box"))
+                }
+                input.startsWith("text", position) -> {
+                    tokens.add(parseText())
                 }
                 input.startsWith("}", position) -> {
                     tokens.add(Token.End)
@@ -34,12 +40,54 @@ class Tokenizer(private val input: String) {
     private fun parseElement(type: String): Token {
         position += type.length
         skipWhitespace()
-        val arguments = if (input[position] == '(') parseArguments() else emptyMap()
+        val arguments = if (position < input.length && input[position] == '(') parseArguments() else emptyMap()
         skipWhitespace()
-        if (type == "window") {
-            return Token.Window(arguments)
+        return when (type) {
+            "window" -> Token.Window(arguments)
+            "box" -> Token.Box(arguments)
+            else -> Token.Unknown
         }
-        return Token.Box(arguments)
+    }
+
+    private fun parseText(): Token {
+        position += "text".length
+        skipWhitespace()
+        val textContent = if (position < input.length && input[position] == '(') parseTextContent() else ""
+        skipWhitespace()
+        return Token.Text(textContent)
+    }
+
+    private fun parseTextContent(): String {
+        position++ // Skip '('
+        val start = position
+        while (position < input.length && input[position] != ')') {
+            position++
+        }
+        val content = input.substring(start, position)
+        if (position < input.length && input[position] == ')') {
+            position++ // Skip ')'
+        }
+        return content
+    }
+
+    private fun parseComment(): Token {
+        position += ";".length
+        skipWhitespace()
+        val textContent = parseCommentContent()
+        skipWhitespace()
+        return Token.Comment(textContent)
+    }
+
+    private fun parseCommentContent(): String {
+        val start = position
+        while (position < input.length && input[position] != ';') {
+            position++
+        }
+        val content = input.substring(start, position)
+        if (position < input.length && input[position] == ';') {
+            position++ // Skip ';'
+        }
+        return content.trim() // Trim whitespace around the comment content
     }
 
     private fun parseArguments(): Map<String, String> {
@@ -49,18 +97,20 @@ class Tokenizer(private val input: String) {
             skipWhitespace()
             val key = parseIdentifier()
             skipWhitespace()
-            if (input[position] == '=') {
+            if (position < input.length && input[position] == '=') {
                 position++ // Skip '='
                 skipWhitespace()
                 val value = parseValue()
                 arguments[key] = value
             }
             skipWhitespace()
-            if (input[position] == ',') {
+            if (position < input.length && input[position] == ',') {
                 position++ // Skip ','
             }
         }
-        position++ // Skip ')'
+        if (position < input.length && input[position] == ')') {
+            position++ // Skip ')'
+        }
         return arguments
     }
 
@@ -74,12 +124,14 @@ class Tokenizer(private val input: String) {
 
     private fun parseValue(): String {
         val start = position
-        if (input[position] == '"') {
+        if (position < input.length && input[position] == '"') {
             position++ // Skip opening quote
             while (position < input.length && input[position] != '"') {
                 position++
             }
-            position++ // Skip closing quote
+            if (position < input.length && input[position] == '"') {
+                position++ // Skip closing quote
+            }
             return input.substring(start + 1, position - 1)
         }
         while (position < input.length && !input[position].isWhitespace() && input[position] != ',' && input[position] != ')') {

@@ -1,0 +1,9 @@
+window (title = "Beacon web export", charset = "utf-8") {
+    box {
+        box {
+            box {
+                text("This file was created using Beacon")
+            }
+        }
+    }
+}
