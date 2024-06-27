@@ -1,3 +1,5 @@
+import compiler.Out
+import compiler.Type
 import debug.Printer
 import directory.FileReader
 
@@ -9,10 +11,10 @@ fun main(args: Array<String>) {
     val dir = ArgumentRegistry.dir
     val isDevmode = ArgumentRegistry.isDevmode
 
-    println("Dev mode: $isDevmode")
+    Out(Type.WARNING,"Dev mode: $isDevmode","",false)
 
     if (dir.isNullOrBlank() || mode.isNullOrBlank()) {
-        println("Usage: beacon -comp <platforms (f.e. web, mobile)> -dir <project root directory> (optional: -d -> (used to track bugs while tokenizing))")
+        Out(Type.ERROR,"Usage: beacon -comp <platforms (f.e. web, mobile)> -dir <project root directory> (optional: -d -> (used to track bugs while tokenizing))", "",true)
     } else {
         val components = mode.split(",").map { it.trim() }
 
@@ -20,8 +22,8 @@ fun main(args: Array<String>) {
             components.forEach { comp ->
                 when (comp) {
                     "web" -> {
-                        println("Started compilation for web")
-                        println("Opening directory: $dir")
+                        Out(Type.INFO,"Started compilation for web","Opening directory: $dir",false)
+                        println()
                         // compile to HTML, and later even <CSS and JS>
 
                         val fileReader = FileReader()
@@ -29,21 +31,19 @@ fun main(args: Array<String>) {
                         printer.printFilePathsAndContents(dir)
                     }
                     "mobile" -> {
-                        println("Started compilation for mobile")
-                        println("Opening directory: $dir")
+                        Out(Type.INFO,"Started compilation for mobile","Opening directory: $dir",false)
                     }
                     "all" -> {
-                        println("Started compilation for all platforms")
-                        println("Opening directory: $dir")
+                        Out(Type.INFO,"Started compilation for all platforms","Opening directory: $dir",false)
                     }
                     else -> {
-                        println("Unknown platform: $comp")
-                        println("currently supported platforms are: web, mobile, all")
+                        Out(Type.ERROR,"Unknown platform: $comp","currently supported platforms are: web, mobile, all",true)
+
                     }
                 }
             }
         } else {
-            println("No components specified for compilation.")
+            Out(Type.ERROR,"No components specified for compilation.","",true)
         }
     }
 }

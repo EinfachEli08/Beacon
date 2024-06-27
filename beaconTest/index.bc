@@ -1,9 +1,17 @@
-window (title = "Beacon web export", charset = "utf-8") {
-    box {
-        box {
-            box {
-                text("This file was created using Beacon")
-            }
+Window (title = "Beacon web export", charset = "utf-8"){
+    Box {
+        Text(name="This file was created using Beacon, lets see the Features!", type="heading")
+        Text(name="There are code comments. You cant see them, but there is one below this element!", type="paragraph")
+
+        ; yahaha, you found me! ;
+
+        Text(name="There are spans...", type="span")
+        Text(name="p's...", type="paragraph")
+        Link(href="content/placeholder.html",name="...and even Links work as expected",target="_parent")
+        Box (id = 40) {
+            Text(name="this paragraph is in a Box container with an id of 40", type="paragraph")
         }
     }
+
+
 }

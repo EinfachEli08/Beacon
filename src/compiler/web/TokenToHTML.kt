@@ -1,5 +1,7 @@
 package compiler.web
 
+import compiler.Out
+import compiler.Type
 import tokenizer.Token
 
 class TokenToHTML {
@@ -25,8 +27,8 @@ class TokenToHTML {
         for (token in tokens) {
             when (token) {
                 is Token.Window -> {
-                    if(token.arguments["charset"] != null) {
-                        appendIndentedLine("<meta charset=${token.arguments["charset"]}>")
+                    if(token.arguments["encoding"] != null) {
+                        appendIndentedLine("<meta charset=${token.arguments["encoding"]}>")
                     }
                     appendIndentedLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
                     appendIndentedLine("<title>${token.arguments["title"]}</title>")
@@ -46,10 +48,30 @@ class TokenToHTML {
                     indentLevel++
                 }
                 is Token.Text -> {
-                    appendIndentedLine("<span>${token.arguments}</span>")
+                    if(token.arguments["type"]?.isNotEmpty() == true){
+                        if(token.arguments["type"] == "heading"){
+                            appendIndentedLine("<h1>${token.arguments["name"]}</h1>")
+                        }else if(token.arguments["type"] == "paragraph") {
+                            appendIndentedLine("<p>${token.arguments["name"]}</p>")
+                        }else if(token.arguments["type"] == "span") {
+                            appendIndentedLine("<span>${token.arguments["name"]}</span>")
+                        }else{
+                            Out(Type.WARNING,"Unrecognized type: ${token.arguments["type"]} ", "This either needs to be implemented or doesn't exist and will be ignored",false)
+                        }
+                    }else{
+                        Out(Type.WARNING,"No type set!", "You didn't set a type in code, please set one. Manually setting to span",false)
+                        appendIndentedLine("<span>${token.arguments["name"]}</span>")
+                    }
+
+                }
+                is Token.Link -> {
+                    val href = token.arguments["href"] ?: ""
+                    val target = token.arguments["target"] ?: ""
+                    val attributes = if (target.isNotEmpty()) " href=\"$href\" target=\"$target\"" else " href=\"$href\""
+                    appendIndentedLine("<a$attributes>${token.arguments["name"] ?: ""}</a>")
                 }
                 is Token.Comment -> {
-                    appendIndentedLine("<!-- ${token.arguments} -->")
+                    appendIndentedLine("<!-- ${token.content} -->")
                 }
                 Token.Open -> {
                     // No specific action required for Open tokens, already handled by Box or Window tokens.
@@ -61,9 +83,8 @@ class TokenToHTML {
                         appendIndentedLine("</$tag>")
                     }
                 }
-                Token.Unknown -> {
-                    // Handle unknown tokens if necessary
-                }
+
+                is Token.Unknown -> println("Unknown token encountered while creating file: $token")
             }
         }
 

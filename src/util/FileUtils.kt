@@ -1,5 +1,7 @@
 package util
 
+import compiler.Out
+import compiler.Type
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -11,11 +13,11 @@ class FileUtils {
         val path = Paths.get(pathString)
         return try {
             Files.createDirectories(path)
-            println("Directory created: $pathString")
+            Out(Type.INFO,"Directory created: $pathString","",false)
             true
         } catch (e: IOException) {
-            println("Failed to create directory: $pathString")
-            e.printStackTrace()
+            Out(Type.ERROR,"Failed to create directory: $pathString", e.printStackTrace().toString(),true)
+
             false
         }
     }
@@ -30,9 +32,9 @@ class FileUtils {
             val file = File(filePath)
             file.parentFile.mkdirs() // Create parent directories if they don't exist
             file.writeText(content)
-            println("File '$filePath' created successfully.")
+            Out(Type.INFO,"File '$filePath' created successfully.","",false)
         } catch (e: IOException) {
-            println("Error creating file '$filePath': ${e.message}")
+            Out(Type.ERROR,"Failed to create file '$filePath': ${e.message}", e.printStackTrace().toString(),true)
         }
     }
 

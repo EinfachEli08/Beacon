@@ -1,19 +1,19 @@
-window (title = "test1", charset = "utf-8") {
-    text("This file was created using Beacon")
-    box (id = 3) {
-        box  (id = 2){
-            box  (id = 1){
-                text("this is a text object")
+Window ( title = "test1" , encoding = "utf-8") {
+    Text ( name = " This file was created using Beacon " )
+    Box (id = 3) {
+        Box  (id = 2){
+            Box  (id = 1){
+                Text(name = "this is a text object", type = "heading")
             }
         }
     }
     ; sdfsdfsdfsdf ;
-    box (id = 2){
-        box (id = 1){
+    Box (id = 5, type = "row"){
+        Box (id = 4){
 
         }
     }
-    box (id = 1){
-
+    Box {
+        Link(href = "../index.html", name = "Go back", target = "_parent")
     }
 }
