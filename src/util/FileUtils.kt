@@ -1,7 +1,7 @@
 package util
 
-import compiler.Out
-import compiler.Type
+import compiler.logging.Out
+import compiler.logging.Type
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files

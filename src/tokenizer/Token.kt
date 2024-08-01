@@ -7,6 +7,7 @@ sealed class Token {
     data class Box(val arguments: Map<String, String>) : Token()
     data class Text(val arguments: Map<String, String>) : Token()
     data class Link(val arguments: Map<String, String>) : Token()
+    data class Declaration(val arguments: Map<String, String>) : Token()
     data class Comment(val content: String) : Token()
     data class Unknown(val value: String) : Token()
 }

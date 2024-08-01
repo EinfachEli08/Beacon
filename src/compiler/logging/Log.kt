@@ -1,4 +1,4 @@
-package compiler
+package compiler.logging
 
 import kotlin.system.exitProcess
 
@@ -29,7 +29,6 @@ fun Out(type: String, title: String, message: String, shouldTerminate: Boolean) 
     }
 
     if (shouldTerminate) {
-        println("\nBeacon will now exit")
         exitProcess(0)
     }
 }

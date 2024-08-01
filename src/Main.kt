@@ -1,6 +1,6 @@
-import compiler.Out
-import compiler.Type
-import debug.Printer
+import compiler.logging.Out
+import compiler.logging.Type
+import out.Printer
 import directory.FileReader
 
 fun main(args: Array<String>) {

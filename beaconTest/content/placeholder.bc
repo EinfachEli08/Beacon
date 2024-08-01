@@ -1,4 +1,4 @@
-Window ( title = "test1" , encoding = "utf-8") {
+Frame ( title = "test1" , encoding = "utf-8") {
     Text ( name = " This file was created using Beacon " )
     Box (id = 3) {
         Box  (id = 2){
@@ -7,7 +7,7 @@ Window ( title = "test1" , encoding = "utf-8") {
             }
         }
     }
-    ; sdfsdfsdfsdf ;
+    // sdfsdfsdfsdf
     Box (id = 5, type = "row"){
         Box (id = 4){
 

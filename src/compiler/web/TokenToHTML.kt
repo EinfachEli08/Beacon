@@ -1,7 +1,7 @@
 package compiler.web
 
-import compiler.Out
-import compiler.Type
+import compiler.logging.Out
+import compiler.logging.Type
 import tokenizer.Token
 
 class TokenToHTML {
@@ -64,6 +64,9 @@ class TokenToHTML {
                     }
 
                 }
+                is Token.Declaration -> {
+                    Out(Type.ERROR,"Not implemented!","The declarative css modification is not implemented yet",true)
+                }
                 is Token.Link -> {
                     val href = token.arguments["href"] ?: ""
                     val target = token.arguments["target"] ?: ""
@@ -84,7 +87,7 @@ class TokenToHTML {
                     }
                 }
 
-                is Token.Unknown -> println("Unknown token encountered while creating file: $token")
+                is Token.Unknown -> Out(Type.ERROR,"Unknown token encountered!","Unknown token encountered while creating file: $token",true)
             }
         }
 

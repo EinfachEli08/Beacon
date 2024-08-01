@@ -1,13 +1,14 @@
 package tokenizer
 
 object Keywords {
-    const val WINDOW = "Window"
+    const val FRAME = "Frame"
     const val BOX = "Box"
     const val TEXT = "Text"
     const val LINK = "Link"
-    const val COMMENT = ';'
+    const val COMMENT = "//"
     const val OPEN_BRACE = '{'
     const val CLOSE_BRACE = '}'
+    const val DECLARATION = '.'
 }
 
 fun matchStringToKeyword(value: String): String? {

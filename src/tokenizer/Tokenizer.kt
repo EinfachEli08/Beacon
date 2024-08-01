@@ -7,18 +7,21 @@ class Tokenizer(private val input: String) {
         val tokens = mutableListOf<Token>()
         while (position < input.length) {
             when {
-                matchKeyword(Keywords.WINDOW) -> tokens.add(parseElement("Window"))
+                matchKeyword(Keywords.FRAME) -> tokens.add(parseElement(Keywords.FRAME))
                 matchChar(Keywords.OPEN_BRACE) -> {
                     tokens.add(Token.Open)
                     position++
                 }
-                matchChar(Keywords.COMMENT) -> tokens.add(parseComment())
-                matchKeyword(Keywords.BOX) -> tokens.add(parseElement("Box"))
+                matchKeyword(Keywords.COMMENT) -> tokens.add(parseComment())
+                matchKeyword(Keywords.BOX) -> tokens.add(parseElement(Keywords.BOX))
                 matchKeyword(Keywords.TEXT) -> tokens.add(parseText())
                 matchKeyword(Keywords.LINK) -> tokens.add(parseLink())
                 matchChar(Keywords.CLOSE_BRACE) -> {
                     tokens.add(Token.End)
                     position++
+                }
+                matchChar(Keywords.DECLARATION) -> {
+                    tokens.add(parseDeclaration())
                 }
                 input[position].isWhitespace() -> position++
                 else -> {
@@ -48,8 +51,8 @@ class Tokenizer(private val input: String) {
         val arguments = if (matchChar('(')) parseArguments() else emptyMap()
         skipWhitespace()
         return when (type) {
-            "Window" -> Token.Window(arguments)
-            "Box" -> Token.Box(arguments)
+            Keywords.FRAME -> Token.Window(arguments)
+            Keywords.BOX -> Token.Box(arguments)
             else -> Token.Unknown(type)
         }
     }
@@ -70,7 +73,6 @@ class Tokenizer(private val input: String) {
         return Token.Link(parseArguments(linkContent))
     }
 
-
     private fun parseContent(): String {
         position++ // Skip '('
         val start = position
@@ -82,6 +84,10 @@ class Tokenizer(private val input: String) {
             position++ // Skip ')'
         }
         return content
+    }
+
+    private fun parseDeclaration(): Token {
+        return TODO()
     }
 
     private fun parseArguments(content: String): Map<String, String> {
@@ -149,21 +155,20 @@ class Tokenizer(private val input: String) {
     }
 
     private fun parseComment(): Token {
-        position += ";".length
+        position += "//".length
         skipWhitespace()
         val textContent = parseCommentContent()
-        skipWhitespace()
         return Token.Comment(textContent)
     }
 
-    private fun parseCommentContent(): String {
+    private fun parseCommentContent(): String { // Line 107
         val start = position
-        while (position < input.length && input[position] != ';') {
+        while (position < input.length && input[position] != '\n') {
             position++
         }
         val content = input.substring(start, position)
-        if (position < input.length && input[position] == ';') {
-            position++ // Skip ';'
+        if (position < input.length && input[position] == '\n') {
+            position++ // Skip '\n'
         }
         return content.trim()
     }
